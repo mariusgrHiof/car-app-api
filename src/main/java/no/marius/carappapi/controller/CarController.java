@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,7 @@ public class CarController {
 
         Car car = carService.findCarById(id);
 
+
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
@@ -47,6 +49,7 @@ public class CarController {
         return new ResponseEntity<>(updateCar, HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCar(@PathVariable("id") Long id){
         carService.deleteCar(id);
