@@ -18,10 +18,6 @@ public class CarService {
     }
 
     public Car addCar(Car car) {
-        car.setMake("Ford");
-        car.setModel("Focus RS MK3");
-        car.setHp(410);
-
         return carRepo.save(car);
     }
 
