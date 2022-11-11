@@ -40,7 +40,7 @@ public class CarController {
     public ResponseEntity<Car> addCar(@RequestBody Car car){
         Car newCar = carService.addCar(car);
 
-        return new ResponseEntity<>(car, HttpStatus.CREATED);
+        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
