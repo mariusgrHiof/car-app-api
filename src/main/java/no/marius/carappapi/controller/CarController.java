@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -43,8 +44,9 @@ public class CarController {
         return new ResponseEntity<>(newCar, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Car> updateCar(@RequestBody Car car){
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Car> updateCar(@PathVariable("id") Long id, @RequestBody Car car){
+        if(!Objects.equals(id, car.getId())) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         Car updateCar = carService.updateCar(car);
 
         return new ResponseEntity<>(updateCar, HttpStatus.OK);
