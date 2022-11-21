@@ -1,42 +1,17 @@
 package no.marius.carappapi.service;
 
-import no.marius.carappapi.exception.UserNotFoundException;
 import no.marius.carappapi.model.Car;
-import no.marius.carappapi.repo.CarRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class CarService {
-    private final CarRepo carRepo;
+public interface CarService {
+  List<Car> getAllCars();
 
-    @Autowired
-    public CarService(CarRepo carRepo) {
-        this.carRepo = carRepo;
-    }
+  Car getCarById(Long id);
 
-    public Car addCar(Car car) {
-        return carRepo.save(car);
-    }
+  Car createCar(Car car);
 
-    public List<Car> findAllCars(){
-        return carRepo.findAll();
-    }
+  Car updateCar(Car car);
 
-    public Car updateCar(Car car){
-        return carRepo.save(car);
-    }
-
-    public Car findCarById(Long id){
-        return carRepo.findCarById(id)
-                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found") );
-    }
-
-    public void deleteCar(Long id){
-        carRepo.deleteCarById(id);
-    }
-
-
+  void deleteCar(long id);
 }

@@ -1,7 +1,8 @@
 package no.marius.carappapi.controller;
 
 import no.marius.carappapi.model.Car;
-import no.marius.carappapi.service.CarService;
+import no.marius.carappapi.service.CarServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,52 +13,59 @@ import java.util.Objects;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/car")
+@RequestMapping("/api")
 public class CarController {
 
-    private final CarService carService;
+  private CarServiceImpl carServiceImpl;
 
-    public CarController(CarService carService) {
-        this.carService = carService;
-    }
+  @Autowired
+  public CarController(CarServiceImpl carServiceImpl) {
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Car>> getAllCars(){
-        List<Car> cars = carService.findAllCars();
+    this.carServiceImpl = carServiceImpl;
+  }
 
-        return new ResponseEntity<>(cars, HttpStatus.OK);
-    }
+  @GetMapping("/cars")
+  public ResponseEntity<List<Car>> getAllCars() {
+    List<Car> cars = carServiceImpl.getAllCars();
 
-    @GetMapping("/find/{id}")
-    public ResponseEntity<Car> getCarById(@PathVariable("id") Long id){
+    return new ResponseEntity<>(cars, HttpStatus.OK);
+  }
 
-        Car car = carService.findCarById(id);
+  @GetMapping("/cars/{id}")
+  public ResponseEntity<Car> getCar(@PathVariable("id") long id) {
+    Car car = carServiceImpl.getCarById(id);
+    return new ResponseEntity<>(car, HttpStatus.OK);
+  }
+
+  @PostMapping("/car/add")
+  public ResponseEntity<Car> createCar(@RequestBody Car car) {
+    Car newCar = carServiceImpl.createCar(car);
+    return new ResponseEntity<>(newCar, HttpStatus.CREATED);
+  }
+
+  @PutMapping("/car/update/{id}")
+  public ResponseEntity<Car> updateCar(@RequestBody Car updateCar, @PathVariable("id") Long id) {
+    Car car = carServiceImpl.getCarById(id);
+    car.setHp(updateCar.getHp());
+    car.setMake(updateCar.getMake());
+    car.setModel(updateCar.getModel());
+    car.setImageUrl(updateCar.getImageUrl());
+
+    carServiceImpl.updateCar(car);
 
 
-        return new ResponseEntity<>(car, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(car, HttpStatus.OK);
+  }
 
-    @PostMapping("/add")
-    public ResponseEntity<Car> addCar(@RequestBody Car car){
-        Car newCar = carService.addCar(car);
 
-        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
-    }
+  @DeleteMapping("/car/delete/{id}")
+  public ResponseEntity<?> deleteCar(@PathVariable("id") Long id) {
+    Car car = carServiceImpl.getCarById(id);
+    carServiceImpl.deleteCar(id);
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Car> updateCar(@PathVariable("id") Long id, @RequestBody Car car){
-        if(!Objects.equals(id, car.getId())) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        Car updateCar = carService.updateCar(car);
 
-        return new ResponseEntity<>(updateCar, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(car, HttpStatus.OK);
 
-    @Transactional
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCar(@PathVariable("id") Long id){
-        carService.deleteCar(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+  }
 
 }
